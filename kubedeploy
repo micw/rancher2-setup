@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+
+import argparse
+import sys
+import jinja2
+
+def parse_template_file(template_file, params):
+#	with open(file,'r') as f:
+#		template=f.read()
+
+	templateLoader = jinja2.FileSystemLoader(searchpath="./")
+	templateEnv = jinja2.Environment(
+		loader=templateLoader,
+		undefined = jinja2.StrictUndefined,
+		comment_start_string='{-',
+		comment_end_string='-}',
+		trim_blocks=True,
+		lstrip_blocks=True,
+		keep_trailing_newline=True
+		)
+
+	try:
+		template = templateEnv.get_template(template_file)
+		print(template.render(params))
+	except jinja2.exceptions.TemplateSyntaxError as e:
+		sys.exit('{0}:{1}: {2}'.format(e.filename, e.lineno, e.message))
+	except jinja2.exceptions.TemplateError as e:
+		sys.exit('{0}: {1}'.format(template_file, e.message))
+
+class StoreDict(argparse.Action):
+	def __call__(self, parser, namespace, values, option_string=None):
+		kv={}
+		if not isinstance(values, (list,)):
+			values=(values,)
+		for value in values:
+			n, v = value.split('=')
+			kv[n]=v
+		setattr(namespace, self.dest, kv)
+
+def main():
+	parser = argparse.ArgumentParser(description="Render yaml templates and optionally deploy them via kubectl")
+	group = parser.add_mutually_exclusive_group()
+	group.add_argument('-f', '--template-file', metavar="resources.tmpl.yaml")
+	group.add_argument('-d', '--deployment-descriptor', metavar="deploy.yaml")
+
+	parser.add_argument('-p', '--params', metavar="param=value", help="Sets a template parameters",
+		action=StoreDict,nargs='*',default={})
+
+	args=parser.parse_args()
+
+	if args.template_file:
+		parse_template_file(args.template_file,args.params)
+
+	if args.deployment_descriptor:
+		sys.exit('deployment_descriptor not supported yet')
+
+if __name__ == "__main__":
+	main()
