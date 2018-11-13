@@ -1,0 +1,4 @@
+---
+
+rancher_server_protocol: https
+rancher_server_port: 8443

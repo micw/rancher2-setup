@@ -1,0 +1,31 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: external-rancher-server
+  namespace: kube-system
+spec:
+  type: ExternalName
+  externalName: {{required "rancher_server_domain" .Values.rancher_server_domain }}
+  ports:
+  - name: rancher
+    port: {{required "rancher_server_port" .Values.rancher_server_port }}
+---
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: rancher-server
+  namespace: kube-system
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.frontend.rule.type: PathPrefix
+    ingress.kubernetes.io/protocol: {{required "rancher_server_protocol" .Values.rancher_server_protocol }}
+spec:
+  rules:
+  - host: {{required "rancher_server_domain" .Values.rancher_server_domain }}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: external-rancher-server
+          servicePort: rancher

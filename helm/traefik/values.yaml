@@ -1,0 +1,5 @@
+---
+
+traefik_version: 1.7.4
+traefik_data_dir: /data/traefik
+traefik_dashboard_path: /traefik
