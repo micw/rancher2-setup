@@ -1,0 +1,35 @@
+# load with iptables-restore --noflush < /etc/iptables/rules.v4
+*nat
+:PREROUTING ACCEPT
+:INPUT ACCEPT
+:OUTPUT ACCEPT
+:POSTROUTING ACCEPT
+
+# Masquerading all outgoing routet traffic
+-A POSTROUTING -o eth0 -j MASQUERADE
+
+COMMIT
+
+*filter
+:INPUT DROP
+:FORWARD ACCEPT
+:OUTPUT ACCEPT
+
+# Cleanup
+-F INPUT
+# Allow traffic of existing connections
+-A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+# Allow all traffic from localhost
+-A INPUT -i lo -j ACCEPT
+# Allow ICMP
+-A INPUT -p icmp -j ACCEPT
+
+
+# Allow SSH
+-A INPUT -p tcp --dport 22 -j ACCEPT
+# Allow wireguard encrypted traffic
+-A INPUT -p tcp --dport 51820 -j ACCEPT
+# Allow rancher server direct access
+-A INPUT -p tcp --dport 8443 -j ACCEPT
+
+COMMIT

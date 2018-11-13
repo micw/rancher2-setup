@@ -1,0 +1,6 @@
+# load with ip6tables-restore --noflush < /etc/iptables/rules.v6
+*filter
+:INPUT DROP
+:FORWARD ACCEPT
+:OUTPUT ACCEPT
+COMMIT
