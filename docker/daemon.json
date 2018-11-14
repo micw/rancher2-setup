@@ -1,0 +1,11 @@
+{
+  "storage-driver": "overlay2",
+  "data-root": "/var/lib/docker",
+  "iptables": false,
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "25m",
+    "max-file": "4"
+  }
+}
+
