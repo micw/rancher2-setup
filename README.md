@@ -1,6 +1,9 @@
 # kubedeploy
 
 * simple python script that processes a jinja2 template of a kubernetes yaml file
+* Advantage over helm is that the user's rbac restrictions are honored
+* This is just a proof of concept, we need to decide if we go this way or use helm
+
 Usage: 
 
 ```
