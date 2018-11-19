@@ -1,0 +1,5 @@
+# /etc/apt/preferences.d/limit-unstable 
+
+Package: *
+Pin: release a=unstable
+Pin-Priority: 50
